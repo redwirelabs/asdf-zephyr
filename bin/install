@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+setup_venv() {
+  local destination=$1
+
+  python3 -m venv $destination/.venv
+  source $destination/.venv/bin/activate
+}
+
+install_west() {
+  pip install west
+}
+
+install_zephyr() {
+  local version=$1
+  local destination=$2
+
+  west init --mr "v${version}" $destination
+
+  pushd $destination
+
+  west update
+  west zephyr-export
+  pip install -r zephyr/scripts/requirements.txt
+
+  popd
+}
+
+install_shims() {
+  local source=$1
+  local destination=$2
+
+  mkdir $destination/bin/
+  cp $source/shims/* $destination/bin/
+}
+
+setup_venv $ASDF_INSTALL_PATH
+install_west
+install_zephyr $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
+install_shims "${BASH_SOURCE[0]%/*/*}" $ASDF_INSTALL_PATH

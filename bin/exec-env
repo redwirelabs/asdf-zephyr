@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+export ZEPHYR_VERSION=$ASDF_INSTALL_VERSION
+export ZEPHYR_BASE=$ASDF_INSTALL_PATH/zephyr
+export VIRTUAL_ENV=$ASDF_INSTALL_PATH/.venv
+
+sdk=$(asdf where zephyr-sdk)
+if [ $? -eq 0 ]; then
+  export ZEPHYR_SDK_INSTALL_DIR=$sdk
+  export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
+fi

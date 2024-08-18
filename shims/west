@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+sdk=$(asdf where zephyr-sdk)
+if [ $? -eq 0 ]; then
+  export PATH=$sdk/sysroots/x86_64-pokysdk-linux/bin:$PATH
+fi
+
+export PATH=$VIRTUAL_ENV/bin:$PATH
+
+west $@
