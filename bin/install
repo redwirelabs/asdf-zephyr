@@ -25,6 +25,8 @@ install_zephyr() {
   west zephyr-export
   pip install -r zephyr/scripts/requirements.txt
 
+  west config build.dir-fmt "build/{board}"
+
   popd
 }
 
