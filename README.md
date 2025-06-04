@@ -13,3 +13,9 @@ your host system.
 ```shell
 asdf plugin add zephyr https://github.com/redwirelabs/asdf-zephyr.git
 ```
+
+## Platform Compatibility
+
+This plugin is compatible with both Linux and macOS. Special handling is included for macOS to avoid shell recursion issues when running west commands.
+
+If you encounter any issues on macOS, please ensure you're using the latest version of the plugin, and see the [macOS Notes](MACOS_NOTES.md) for more information.
