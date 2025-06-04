@@ -1,10 +1,27 @@
 #!/usr/bin/env bash
 
+# Get the zephyr-sdk path
 sdk=$(asdf where zephyr-sdk)
 if [ $? -eq 0 ]; then
   export PATH=$sdk/sysroots/x86_64-pokysdk-linux/bin:$PATH
 fi
 
-export PATH=$VIRTUAL_ENV/bin:$PATH
-
-west $@
+# Find the actual west executable in the virtual environment
+if [ -n "$VIRTUAL_ENV" ] && [ -f "$VIRTUAL_ENV/bin/west" ]; then
+  # Directly execute the west in the virtual environment to avoid recursion
+  exec "$VIRTUAL_ENV/bin/west" "$@"
+else
+  # Fallback: try to find west in the standard location based on ASDF_INSTALL_PATH
+  # Parse version number properly to handle "Version" prefix and newlines
+  ZEPHYR_VERSION=$(asdf current zephyr 2>/dev/null | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+  
+  if [ -n "$ZEPHYR_VERSION" ]; then
+    WEST_PATH="$HOME/.asdf/installs/zephyr/$ZEPHYR_VERSION/.venv/bin/west"
+    if [ -f "$WEST_PATH" ] && [ -x "$WEST_PATH" ]; then
+      exec "$WEST_PATH" "$@"
+    fi
+  fi
+  
+  echo "ERROR: Could not find west executable in virtual environment"
+  exit 1
+fi

@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+# Fix for empty ASDF_INSTALL_VERSION
+if [ -z "$ASDF_INSTALL_VERSION" ]; then
+  # Get version from current directory or .tool-versions, removing "Version" prefix and newlines
+  ASDF_INSTALL_VERSION=$(asdf current zephyr 2>/dev/null | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+  
+  # Fix ASDF_INSTALL_PATH to include version
+  if [ -n "$ASDF_INSTALL_VERSION" ]; then
+    ASDF_INSTALL_PATH="$ASDF_INSTALL_PATH/$ASDF_INSTALL_VERSION"
+  fi
+fi
+
 export ZEPHYR_VERSION=$ASDF_INSTALL_VERSION
 export ZEPHYR_BASE=$ASDF_INSTALL_PATH/zephyr
 export VIRTUAL_ENV=$ASDF_INSTALL_PATH/.venv
